@@ -1,5 +1,6 @@
 package br.com.siad.api.controllers;
 
+import br.com.siad.api.DTO.error.BadReqDTO;
 import br.com.siad.api.models.Filial;
 import jakarta.validation.Valid;
 import br.com.siad.api.DTO.filiais.RegisterFilialDTO;
@@ -29,7 +30,7 @@ public class FiliaisController {
 
         if (existFilial != null) {
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Filial já cadastrada com esse nome !");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new BadReqDTO("Filial já cadastrada com esse nome !"));
 
         }
 

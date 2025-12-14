@@ -3,11 +3,11 @@ package br.com.siad.api.models;
 import br.com.siad.api.DTO.filiais.RegisterFilialDTO;
 import br.com.siad.api.enums.FilialTypes;
 import jakarta.persistence.*;
-import jakarta.validation.Valid;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
+import java.util.Set;
 
 @Table(name = "filiais")
 @Entity(name = "filiais")
@@ -31,6 +31,15 @@ public class Filial {
 
     @CreationTimestamp
     private Instant timestamp;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "filial_func",
+            joinColumns = @JoinColumn(name = "filial_id"),
+            inverseJoinColumns = @JoinColumn(name = "func_id")
+    )
+    private Set<Funcionario> funcionarios;
+
 
     public Filial(RegisterFilialDTO data) {
         this.name = data.name();

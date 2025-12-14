@@ -1,5 +1,6 @@
 package br.com.siad.api.controllers.auth;
 
+import br.com.siad.api.DTO.error.BadReqDTO;
 import br.com.siad.api.DTO.user.LoginRequest;
 import br.com.siad.api.DTO.user.LoginResponse;
 import br.com.siad.api.DTO.user.UserResponse;
@@ -9,6 +10,8 @@ import br.com.siad.api.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -36,14 +39,12 @@ public class TokenController {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login (@RequestBody @Valid LoginRequest data) throws Exception{
+    public ResponseEntity login (@RequestBody @Valid LoginRequest data) throws Exception{
 
         var user = userRepository.findByEmail(data.email());
 
-        if (user.isEmpty() || user.get().isLoginCorrect(data , bCryptPasswordEncoder)) {
-
-            throw new BadCredentialsException("Usuario ou senha invalido !");
-
+        if (user.isEmpty() || !user.get().isLoginCorrect(data, bCryptPasswordEncoder)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new BadReqDTO("Usuario ou senha invalidos !"));
         }
 
         var now = Instant.now();
